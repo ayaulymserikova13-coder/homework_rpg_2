@@ -1,7 +1,5 @@
 package com.narxoz.rpg.loot;
 
-import com.narxoz.rpg.loot.LootTable;
-
 import java.util.ArrayList;
 import java.util.List;
 
