@@ -1,0 +1,101 @@
+@startuml
+title Prototype + Abstract Factory (HW2)
+
+' ===== Products =====
+interface Ability {
+  + getName(): String
+  + getDamage(): int
+  + getDescription(): String
+  + clone(): Ability
+}
+
+interface LootTable {
+  + getItems(): List<String>
+  + getGoldDrop(): int
+  + getExperienceDrop(): int
+  + getLootInfo(): String
+  + clone(): LootTable
+}
+
+' ===== Concrete Abilities (examples) =====
+class FlameBreath
+class FireShield
+class FrostBreath
+class IceShield
+class ShadowStrike
+class Vanish
+
+Ability <|.. FlameBreath
+Ability <|.. FireShield
+Ability <|.. FrostBreath
+Ability <|.. IceShield
+Ability <|.. ShadowStrike
+Ability <|.. Vanish
+
+' ===== Concrete LootTables =====
+class FireLootTable
+class IceLootTable
+class ShadowLootTable
+
+LootTable <|.. FireLootTable
+LootTable <|.. IceLootTable
+LootTable <|.. ShadowLootTable
+
+' ===== Abstract Factory =====
+interface EnemyComponentFactory {
+  + createAbilities(): List<Ability>
+  + createLootTable(): LootTable
+  + createAIBehavior(): String
+}
+
+class FireComponentFactory
+class IceComponentFactory
+class ShadowComponentFactory
+
+EnemyComponentFactory <|.. FireComponentFactory
+EnemyComponentFactory <|.. IceComponentFactory
+EnemyComponentFactory <|.. ShadowComponentFactory
+
+FireComponentFactory ..> FlameBreath
+FireComponentFactory ..> FireShield
+FireComponentFactory ..> FireLootTable
+
+IceComponentFactory ..> FrostBreath
+IceComponentFactory ..> IceShield
+IceComponentFactory ..> IceLootTable
+
+ShadowComponentFactory ..> ShadowStrike
+ShadowComponentFactory ..> Vanish
+ShadowComponentFactory ..> ShadowLootTable
+
+' ===== Prototype =====
+interface Enemy {
+  + clone(): Enemy
+  + getAbilities(): List<Ability>
+  + getLootTable(): LootTable
+}
+
+class Goblin
+class DragonBoss
+
+Enemy <|.. Goblin
+Enemy <|.. DragonBoss
+
+Enemy o-- "0..*" Ability : abilities
+Enemy o-- "0..1" LootTable : lootTable
+
+class EnemyRegistry {
+  - templates: Map<String, Enemy>
+  + registerTemplate(key, template)
+  + createFromTemplate(key): Enemy
+  + listTemplates(): Set<String>
+}
+
+EnemyRegistry o-- "1..*" Enemy : stores templates
+note right of EnemyRegistry
+createFromTemplate(key)
+returns template.clone()
+== Prototype pattern ==
+end note
+
+@enduml

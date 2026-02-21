@@ -1,0 +1,57 @@
+@startuml
+skinparam dpi 150
+skinparam maxMessageSize 80
+title Builder + Factory Method (HW2)
+
+interface Enemy
+class Goblin
+class DragonBoss
+
+Enemy <|.. Goblin
+Enemy <|.. DragonBoss
+
+interface EnemyBuilder {
+  + reset(): EnemyBuilder
+  + setName(name): EnemyBuilder
+  + setHealth(hp): EnemyBuilder
+  + setDamage(dmg): EnemyBuilder
+  + setDefense(def): EnemyBuilder
+  + setSpeed(spd): EnemyBuilder
+  + setElement(el): EnemyBuilder
+  + setAIBehavior(ai): EnemyBuilder
+  + setLootTable(loot): EnemyBuilder
+  + addAbility(a): EnemyBuilder
+  + setAbilities(list): EnemyBuilder
+  + build(): Enemy
+}
+
+class BasicEnemyBuilder {
+  + build(): Enemy
+}
+
+class BossEnemyBuilder {
+  + setPhases(p1,p2,p3): BossEnemyBuilder
+  + setFlight(canFly, breath, wingspan): BossEnemyBuilder
+  + build(): Enemy
+}
+
+EnemyBuilder <|.. BasicEnemyBuilder
+EnemyBuilder <|.. BossEnemyBuilder
+
+class EnemyDirector {
+  + createMinion(name, factory): Enemy
+  + createElite(name, factory): Enemy
+  + createMiniBoss(name, factory): Enemy
+  + createRaidBoss(name, factory): Enemy
+}
+
+EnemyDirector --> EnemyBuilder : uses builder (fluent)
+note right of EnemyBuilder::build
+build() returns Enemy
+== Factory Method inside Builder ==
+end note
+
+BasicEnemyBuilder ..> Goblin : builds
+BossEnemyBuilder ..> DragonBoss : builds
+
+@enduml
